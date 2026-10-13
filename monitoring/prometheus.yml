@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 30s
+
+scrape_configs:
+  - job_name: 'pve'
+    metrics_path: /pve
+    params:
+      module: [default]
+    static_configs:
+      - targets: ['pve-exporter:9221']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+        replacement: 10.10.10.68
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: pve-exporter:9221
+
+  - job_name: 'proxmox-otel'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['10.10.10.101:8889']
