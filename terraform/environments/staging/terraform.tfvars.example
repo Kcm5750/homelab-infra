@@ -1,0 +1,35 @@
+# Copy to terraform.tfvars (git-ignored) if you need to override defaults.
+# NEVER put secrets here. The API token is supplied ONLY as:
+#   export TF_VAR_proxmox_api_token='user@realm!tokenid=SECRET'
+# SSH public keys (not secret) may be given here or via TF_VAR_ssh_public_keys.
+
+proxmox_endpoint = "https://10.10.10.68:8006/"
+proxmox_insecure = true # default Proxmox certificate is self-signed
+node_name        = "pve"
+template_vm_id   = 8001
+datastore_id     = "local-lvm"
+
+# UNCONFIRMED: check the boot disk of template 8001 in Proxmox (Hardware tab).
+template_disk_interface = "scsi0"
+
+ssh_public_keys = [
+  "ssh-ed25519 AAAA...REPLACE_WITH_YOUR_PUBLIC_KEY you@host",
+]
+
+# Host budget for NEW VMs (sum over var.vms). Change here, in one place.
+resource_budget = {
+  max_memory_gb = 20
+  max_disk_gb   = 115
+}
+
+# Uncomment to override the VM list defined in variables.tf.
+# vms = {
+#   "lab-app-02" = {
+#     vm_id        = 8003
+#     ipv4_address = "10.10.10.103"
+#     cpu_cores    = 2
+#     memory_gb    = 6
+#     disk_gb      = 40
+#     groups       = ["app_servers"]
+#   }
+# }

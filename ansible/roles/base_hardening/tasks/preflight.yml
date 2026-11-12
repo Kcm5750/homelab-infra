@@ -1,0 +1,36 @@
+---
+- name: Preflight | Require a Debian-family OS
+  ansible.builtin.assert:
+    that: ansible_facts['os_family'] == 'Debian'
+    fail_msg: "base_hardening supports Debian/Ubuntu only (found {{ ansible_facts['os_family'] }})."
+    quiet: true
+
+- name: Preflight | Require at least one SSH source network
+  ansible.builtin.assert:
+    that: base_hardening_ssh_allowed_cidrs | length > 0
+    fail_msg: base_hardening_ssh_allowed_cidrs must not be empty, otherwise the firewall would block SSH.
+    quiet: true
+
+- name: Preflight | Refuse to run as root login (PermitRootLogin will be disabled)
+  ansible.builtin.assert:
+    that: base_hardening_login_user != 'root'
+    fail_msg: Ansible connects as root; PermitRootLogin no would lock you out. Connect as a sudo user.
+    quiet: true
+  when: base_hardening_lockout_check | bool
+
+- name: Preflight | Look up authorized_keys of the connecting user
+  ansible.builtin.stat:
+    path: "/home/{{ base_hardening_login_user }}/.ssh/authorized_keys"
+  register: base_hardening_authorized_keys
+  when: base_hardening_lockout_check | bool
+
+- name: Preflight | Require a key for the connecting user (password login will be disabled)
+  ansible.builtin.assert:
+    that:
+      - base_hardening_authorized_keys.stat.exists
+      - base_hardening_authorized_keys.stat.size > 0
+    fail_msg: >-
+      No ~/.ssh/authorized_keys for {{ base_hardening_login_user }}. Disabling password login
+      could lock you out. Add your key first, or set base_hardening_lockout_check: false.
+    quiet: true
+  when: base_hardening_lockout_check | bool

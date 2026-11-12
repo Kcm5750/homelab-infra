@@ -1,0 +1,19 @@
+---
+extends: default
+
+ignore: |
+  .terraform/
+  ansible/.collections/
+
+rules:
+  line-length:
+    max: 140
+    level: warning
+  truthy:
+    allowed-values: ["true", "false"]
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: {}
+  document-start:
+    present: true

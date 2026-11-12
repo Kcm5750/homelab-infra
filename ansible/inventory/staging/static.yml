@@ -1,0 +1,13 @@
+---
+# Hosts NOT created by Terraform. The Terraform-managed hosts are written to
+# hosts.yml (generated, git-ignored) by scripts/tf-to-inventory.py.
+all:
+  children:
+    lab:
+      children:
+        app_servers:
+          hosts:
+            # VM 8002 - exists already, Ansible-only (not in Terraform state).
+            lab-app-01:
+              ansible_host: 10.10.10.101
+        docker_hosts: {}

@@ -1,0 +1,17 @@
+---
+- name: Baseline for every lab host
+  hosts: lab
+  become: true
+  serial: 1
+  roles:
+    - role: base_hardening
+      tags: [base, hardening]
+    - role: node_exporter
+      tags: [monitoring, node_exporter]
+
+- name: Container hosts
+  hosts: docker_hosts
+  become: true
+  roles:
+    - role: docker
+      tags: [docker]

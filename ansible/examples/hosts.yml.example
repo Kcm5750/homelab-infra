@@ -1,0 +1,19 @@
+---
+# Example of what scripts/tf-to-inventory.py generates as hosts.yml
+# (git-ignored). Do not edit by hand; regenerate after `terraform apply`.
+all:
+  children:
+    lab:
+      children:
+        app_servers:
+          hosts:
+            lab-app-02:
+              ansible_host: 10.10.10.103
+              ansible_user: ubuntu
+              vm_id: 8003
+        docker_hosts:
+          hosts:
+            lab-docker-01:
+              ansible_host: 10.10.10.110
+              ansible_user: ubuntu
+              vm_id: 8010

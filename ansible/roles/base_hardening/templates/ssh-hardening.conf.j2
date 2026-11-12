@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# Named 10-* on purpose: sshd uses the FIRST value it sees, and cloud images ship
+# 50-cloud-init.conf with "PasswordAuthentication yes". This file must sort first.
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+PermitEmptyPasswords no
+X11Forwarding no
+MaxAuthTries {{ base_hardening_ssh_max_auth_tries }}
+LoginGraceTime {{ base_hardening_ssh_login_grace_time }}
+ClientAliveInterval {{ base_hardening_ssh_client_alive_interval }}
+ClientAliveCountMax {{ base_hardening_ssh_client_alive_count_max }}
+{% if base_hardening_ssh_allow_users | length > 0 %}
+AllowUsers {{ base_hardening_ssh_allow_users | join(' ') }}
+{% endif %}

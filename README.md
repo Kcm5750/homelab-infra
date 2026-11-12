@@ -47,4 +47,3 @@ Version-controlled configuration and documentation for my Proxmox homelab.
 \- \[ ] Monitoring configuration committed
 
 \- \[ ] Backup and restore tested
-
