@@ -1,0 +1,4 @@
+---
+# Users allowed to run docker (membership is root-equivalent access).
+docker_users:
+  - "{{ ansible_user }}"

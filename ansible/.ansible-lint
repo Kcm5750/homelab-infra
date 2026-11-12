@@ -1,0 +1,6 @@
+---
+profile: production
+exclude_paths:
+  - .collections/
+  - .cache/
+  - inventory/staging/group_vars/all/vault.yml.example

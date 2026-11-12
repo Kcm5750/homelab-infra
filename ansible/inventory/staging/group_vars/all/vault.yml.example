@@ -1,0 +1,7 @@
+---
+# Copy to vault.yml, fill in, then encrypt:
+#   cp vault.yml.example vault.yml
+#   ansible-vault encrypt vault.yml
+# vault.yml is git-ignored. Edit later with: ansible-vault edit vault.yml
+# Only reference these through non-vault names (e.g. in main.yml).
+vault_ansible_become_password: CHANGE_ME

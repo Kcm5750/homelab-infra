@@ -46,7 +46,7 @@ ansible/.collections/
 ansible/.cache/
 # Generated from `terraform output` by scripts/tf-to-inventory.py
 ansible/inventory/*/hosts.yml
-!ansible/inventory/*/hosts.yml.example
+!ansible/examples/hosts.yml.example
 
 # ---- State backups / local scratch ----
 *.tfstate.enc

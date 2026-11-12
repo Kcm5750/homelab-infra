@@ -1,0 +1,22 @@
+---
+# Connection
+# UNCONFIRMED for lab-app-01 (VM 8002): set its real login user in
+# host_vars/lab-app-01.yml if it is not "ubuntu". Terraform-created VMs use the
+# cloud-init user, which is written into the generated hosts.yml.
+ansible_user: ubuntu
+ansible_python_interpreter: auto_silent
+
+# Optional sudo password. Leave unset when the user has passwordless sudo
+# (the cloud-init default). If needed, define vault_ansible_become_password
+# in the encrypted group_vars/all/vault.yml.
+ansible_become_password: "{{ vault_ansible_become_password | default(omit) }}"
+
+# Lab network
+lab_network_cidr: 10.10.10.0/24
+
+# Who may SSH in / scrape node_exporter. Narrow node_exporter to the
+# monitoring VM (500) address once it is confirmed.
+base_hardening_ssh_allowed_cidrs:
+  - "{{ lab_network_cidr }}"
+node_exporter_allowed_sources:
+  - "{{ lab_network_cidr }}"
