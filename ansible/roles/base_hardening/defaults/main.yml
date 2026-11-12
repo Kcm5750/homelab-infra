@@ -1,0 +1,29 @@
+---
+# User Ansible connects as. Used by the lock-out preflight check.
+base_hardening_login_user: "{{ ansible_user | default(ansible_facts['user_id']) }}"
+
+# Abort before changing SSH if the connecting user has no authorized_keys
+# (prevents locking yourself out when disabling password login).
+base_hardening_lockout_check: true
+
+# --- SSH --------------------------------------------------------------------
+base_hardening_ssh_port: 22
+base_hardening_ssh_allowed_cidrs:
+  - 10.10.10.0/24
+base_hardening_ssh_max_auth_tries: 3
+base_hardening_ssh_login_grace_time: 30
+base_hardening_ssh_client_alive_interval: 300
+base_hardening_ssh_client_alive_count_max: 2
+# Optional AllowUsers restriction; empty = not set.
+base_hardening_ssh_allow_users: []
+
+# --- Firewall (UFW) ---------------------------------------------------------
+base_hardening_firewall_enabled: true
+# Extra allow rules, e.g.:
+#   - { port: 443, proto: tcp, src: 10.10.10.0/24, comment: HTTPS from LAN }
+base_hardening_firewall_extra_rules: []
+
+# --- Unattended security updates -------------------------------------------
+base_hardening_unattended_upgrades_enabled: true
+base_hardening_unattended_upgrades_reboot: false
+base_hardening_unattended_upgrades_reboot_time: "04:00"

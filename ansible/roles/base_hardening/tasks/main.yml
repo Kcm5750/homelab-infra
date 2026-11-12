@@ -1,0 +1,18 @@
+---
+- name: Run preflight checks
+  ansible.builtin.import_tasks: preflight.yml
+  tags: [base, hardening, preflight]
+
+- name: Configure SSH
+  ansible.builtin.import_tasks: ssh.yml
+  tags: [base, hardening, ssh]
+
+- name: Configure firewall
+  ansible.builtin.import_tasks: firewall.yml
+  when: base_hardening_firewall_enabled | bool
+  tags: [base, hardening, firewall]
+
+- name: Configure unattended upgrades
+  ansible.builtin.import_tasks: updates.yml
+  when: base_hardening_unattended_upgrades_enabled | bool
+  tags: [base, hardening, updates]

@@ -1,0 +1,42 @@
+---
+- name: Firewall | Install ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+# Allow rules go in BEFORE the default-deny policy and enabling, so SSH is never cut.
+- name: Firewall | Allow SSH from trusted networks
+  community.general.ufw:
+    rule: allow
+    port: "{{ base_hardening_ssh_port | string }}"
+    proto: tcp
+    src: "{{ item }}"
+    comment: "SSH from {{ item }}"
+  loop: "{{ base_hardening_ssh_allowed_cidrs }}"
+
+- name: Firewall | Apply extra allow rules
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port | string }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    src: "{{ item.src | default('any') }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ base_hardening_firewall_extra_rules }}"
+  loop_control:
+    label: "{{ item.port }}/{{ item.proto | default('tcp') }} from {{ item.src | default('any') }}"
+
+- name: Firewall | Default deny incoming
+  community.general.ufw:
+    default: deny
+    direction: incoming
+
+- name: Firewall | Default allow outgoing
+  community.general.ufw:
+    default: allow
+    direction: outgoing
+
+- name: Firewall | Enable ufw
+  community.general.ufw:
+    state: enabled
