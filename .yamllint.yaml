@@ -4,6 +4,8 @@ extends: default
 ignore: |
   .terraform/
   ansible/.collections/
+  ansible/.ansible/
+  ansible/.cache/
 
 rules:
   line-length:
