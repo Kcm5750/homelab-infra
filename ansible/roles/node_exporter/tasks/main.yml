@@ -1,0 +1,119 @@
+---
+- name: Check platform and version pin
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] in node_exporter_arch_map
+      - node_exporter_arch in node_exporter_checksums
+    fail_msg: "No node_exporter checksum for architecture {{ ansible_facts['architecture'] }}."
+    quiet: true
+  vars:
+    node_exporter_arch: "{{ node_exporter_arch_map[ansible_facts['architecture']] | default('unsupported') }}"
+  tags: [monitoring, node_exporter]
+
+- name: Create node_exporter group
+  ansible.builtin.group:
+    name: "{{ node_exporter_group }}"
+    system: true
+  tags: [monitoring, node_exporter, node_exporter_install]
+
+- name: Create node_exporter user
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+  tags: [monitoring, node_exporter, node_exporter_install]
+
+- name: Install node_exporter release
+  vars:
+    node_exporter_arch: "{{ node_exporter_arch_map[ansible_facts['architecture']] }}"
+    node_exporter_release_dir: "{{ node_exporter_install_root }}/{{ node_exporter_version }}"
+  tags: [monitoring, node_exporter, node_exporter_install]
+  block:
+    - name: Create install directories (root-owned)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ node_exporter_install_root }}"
+        - "{{ node_exporter_release_dir }}"
+
+    - name: Download release tarball (checksum verified)
+      ansible.builtin.get_url:
+        url: "{{ node_exporter_download_url }}"
+        dest: "{{ node_exporter_release_dir }}/node_exporter.tar.gz"
+        checksum: "sha256:{{ node_exporter_checksums[node_exporter_arch] }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Unpack release
+      ansible.builtin.unarchive:
+        src: "{{ node_exporter_release_dir }}/node_exporter.tar.gz"
+        dest: "{{ node_exporter_release_dir }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+        owner: root
+        group: root
+        creates: "{{ node_exporter_release_dir }}/node_exporter"
+
+    - name: Point the stable binary path at this version
+      ansible.builtin.file:
+        src: "{{ node_exporter_release_dir }}/node_exporter"
+        dest: "{{ node_exporter_bin }}"
+        state: link
+      notify: Restart node_exporter
+
+- name: Install systemd unit
+  ansible.builtin.template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart node_exporter
+  tags: [monitoring, node_exporter, node_exporter_config]
+
+- name: Enable and start node_exporter
+  ansible.builtin.systemd_service:
+    name: node_exporter
+    enabled: true
+    state: started
+    daemon_reload: true
+  tags: [monitoring, node_exporter, node_exporter_config]
+
+- name: Open the firewall for node_exporter
+  when: node_exporter_manage_firewall | bool
+  tags: [monitoring, node_exporter, node_exporter_firewall]
+  block:
+    - name: Check whether ufw is installed
+      ansible.builtin.stat:
+        path: /usr/sbin/ufw
+      register: node_exporter_ufw
+
+    - name: Allow node_exporter port from monitoring sources
+      community.general.ufw:
+        rule: allow
+        port: "{{ node_exporter_port | string }}"
+        proto: tcp
+        src: "{{ item }}"
+        comment: "node_exporter from {{ item }}"
+      loop: "{{ node_exporter_allowed_sources }}"
+      when: node_exporter_ufw.stat.exists
+
+- name: Verify node_exporter answers locally
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ node_exporter_port }}/metrics"
+    status_code: 200
+    return_content: false
+  register: node_exporter_check
+  until: node_exporter_check.status == 200
+  retries: 5
+  delay: 2
+  changed_when: false
+  when: not ansible_check_mode
+  tags: [monitoring, node_exporter, node_exporter_verify]

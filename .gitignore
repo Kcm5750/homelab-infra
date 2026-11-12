@@ -38,12 +38,14 @@ tfplan
 *.tfvars
 *.tfvars.json
 !*.tfvars.example
-# The provider lock file IS committed (.terraform.lock.hcl).
+# The provider lock file IS committed for environments (.terraform.lock.hcl),
+# but not for reusable modules (see terraform/modules pattern at the end of this file).
 
 # ---- Ansible ----
 *.retry
 ansible/.collections/
 ansible/.cache/
+ansible/.ansible/
 # Generated from `terraform output` by scripts/tf-to-inventory.py
 ansible/inventory/*/hosts.yml
 !ansible/examples/hosts.yml.example
