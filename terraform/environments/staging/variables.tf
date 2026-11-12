@@ -50,6 +50,21 @@ variable "template_vm_id" {
   default     = 8001
 }
 
+variable "template_disk_interface" {
+  description = <<-EOT
+    UNCONFIRMED - verify before the first apply: interface of the boot disk of template 8001
+    (Proxmox UI > VM 8001 > Hardware, e.g. "scsi0", "virtio0", "sata0").
+    If it does not match, the clone gets an extra disk instead of resizing the boot disk.
+  EOT
+  type        = string
+  default     = "scsi0"
+
+  validation {
+    condition     = can(regex("^(scsi|virtio|sata|ide)[0-9]+$", var.template_disk_interface))
+    error_message = "template_disk_interface must look like scsi0, virtio0, sata0 or ide0."
+  }
+}
+
 variable "datastore_id" {
   description = "Thin-provisioned datastore for VM disks."
   type        = string

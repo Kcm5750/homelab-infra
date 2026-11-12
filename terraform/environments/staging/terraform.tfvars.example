@@ -9,6 +9,9 @@ node_name        = "pve"
 template_vm_id   = 8001
 datastore_id     = "local-lvm"
 
+# UNCONFIRMED: check the boot disk of template 8001 in Proxmox (Hardware tab).
+template_disk_interface = "scsi0"
+
 ssh_public_keys = [
   "ssh-ed25519 AAAA...REPLACE_WITH_YOUR_PUBLIC_KEY you@host",
 ]

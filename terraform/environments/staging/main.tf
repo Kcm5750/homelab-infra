@@ -7,6 +7,7 @@ module "vm" {
   node_name      = var.node_name
   template_vm_id = var.template_vm_id
   datastore_id   = var.datastore_id
+  disk_interface = var.template_disk_interface
 
   cpu_cores = each.value.cpu_cores
   memory_mb = each.value.memory_gb * 1024
