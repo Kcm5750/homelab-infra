@@ -118,7 +118,7 @@ checked the same way. See [`terraform/README.md`](terraform/README.md).
 ├── scripts/
 │   ├── tf-to-inventory.py                 # Terraform output -> Ansible inventory
 │   ├── tfstate-backup.sh                  # age-encrypted state backup to a location outside WSL
-│   └── tfstate-restore.sh                 # verified restore of the encrypted state backup
+│   └── tfstate-restore.sh                 # restore of the encrypted state backup (tested with throwaway data only)
 ├── terraform/
 │   ├── environments/
 │   │   └── staging/                       # root module (run Terraform here)
@@ -153,7 +153,7 @@ checked the same way. See [`terraform/README.md`](terraform/README.md).
 |---|---|
 | **Implemented and linted / validated** | Terraform module and staging environment (`terraform fmt`, `validate`, `tflint`; variable guard rails exercised with `terraform console` on dummy values, never `plan`) |
 | | Ansible roles `base_hardening`, `docker`, `node_exporter` and `site.yml` (`ansible-lint` production profile, `yamllint --strict`; Jinja templates rendered offline) |
-| | State backup/restore scripts (`shellcheck`; exercised end to end with throwaway data in a temp directory) |
+| | State backup/restore scripts (`shellcheck`; tested locally with throwaway data in a temp directory; not yet run on real state) |
 | | Inventory generator (tested with sample JSON; output merges with `static.yml`) |
 | | Quality gates: `.pre-commit-config.yaml` (yamllint, terraform fmt/validate/tflint, gitleaks, ansible-lint) and a check-only `Makefile` |
 | | Monitoring stack config and recovery runbook (written earlier; only YAML-linted here, deployed state not verified) |
