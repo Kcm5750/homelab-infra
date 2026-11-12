@@ -8,9 +8,11 @@
 
 - Hypervisor: Proxmox VE
 
-- Monitoring VM ID: 500
+- Monitoring VM ID: 104
 
-- VM name: Moniteering
+- VM name: Monitering
+
+- Monitoring VM IP: unconfirmed (verify in Proxmox)
 
 - Deployment directory: `/opt/monitoring`
 
@@ -144,7 +146,7 @@ Git does not back up these volumes. Restoring configuration alone does not resto
 
 
 
-Back up VM 500 through Proxmox. Periodically restore the backup as an isolated test VM to verify that recovery works.
+Back up VM 104 through Proxmox. Periodically restore the backup as an isolated test VM to verify that recovery works.
 
 
 

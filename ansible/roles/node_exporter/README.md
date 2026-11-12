@@ -18,4 +18,5 @@ Tags: `monitoring`, `node_exporter`, `node_exporter_install`, `node_exporter_con
       - targets: ['10.10.10.101:9100', '10.10.10.103:9100', '10.10.10.110:9100']
 ```
 
-Narrow `node_exporter_allowed_sources` to the monitoring VM's address once confirmed.
+TODO: narrow `node_exporter_allowed_sources` to the monitoring VM's address (VM 104, "Monitering") once its IP is
+confirmed. Until then the port is open to the whole lab network (10.10.10.0/24).

@@ -27,5 +27,6 @@ node_exporter_extra_args: []
 
 # Firewall (UFW). Rules are added only if ufw is installed (base_hardening installs it).
 node_exporter_manage_firewall: true
+# TODO: restrict to the monitoring VM (104) IP once confirmed; the whole lab network is allowed until then.
 node_exporter_allowed_sources:
   - 10.10.10.0/24

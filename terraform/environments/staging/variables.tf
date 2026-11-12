@@ -116,7 +116,7 @@ variable "vm_id_range" {
 variable "protected_vm_ids" {
   description = "VM IDs Terraform must never manage: unrelated VMs, templates, VMs managed elsewhere. Do not remove entries."
   type        = list(number)
-  default     = [101, 103, 104, 500, 8001, 8002, 9001]
+  default     = [101, 103, 104, 8001, 8002, 9001]
 }
 
 variable "reserved_ips" {
@@ -185,7 +185,7 @@ variable "vms" {
 
   validation {
     condition     = alltrue([for v in values(var.vms) : !contains(var.protected_vm_ids, v.vm_id) && v.vm_id != var.template_vm_id])
-    error_message = "A vm_id collides with a protected VM or the template (101, 103, 104, 500, 8001, 8002, 9001 by default)."
+    error_message = "A vm_id collides with a protected VM or the template (101, 103, 104, 8001, 8002, 9001 by default)."
   }
 
   validation {

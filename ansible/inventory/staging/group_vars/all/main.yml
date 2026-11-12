@@ -15,7 +15,8 @@ ansible_become_password: "{{ vault_ansible_become_password | default(omit) }}"
 lab_network_cidr: 10.10.10.0/24
 
 # Who may SSH in / scrape node_exporter. Narrow node_exporter to the
-# monitoring VM (500) address once it is confirmed.
+# monitoring VM (104, "Monitering") address.
+# TODO: the monitoring VM IP is unconfirmed, so node_exporter stays open to the whole lab network for now.
 base_hardening_ssh_allowed_cidrs:
   - "{{ lab_network_cidr }}"
 node_exporter_allowed_sources:
